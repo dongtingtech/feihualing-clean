@@ -1,0 +1,25 @@
+# ---- 数据与产物：绝不入库（体积 1.7GB，GitHub 单文件上限 100MB）----
+# 测试音频不用存：d0_make_test_audio.py 可随时重新合成
+data/
+output/
+tools/
+# 但保留 tools 的说明文件，让别人知道该往这里放什么
+!tools/README.md
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 临时 ----
+*.log
+*.tmp
