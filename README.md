@@ -13,7 +13,7 @@
 | D3 VAD切分 + 降噪 + 响度归一 | ✅ **真实数据已跑完：1282 条 → 26369 段，语音保留率 49.8%，仅 4 条 0 段（极轻声边缘录音）** |
 | D4 Whisper 转写 + 文本清洗 | ✅ **真实数据已跑完：1282/1282 条，13.7 分钟（RTF 31），69416 字，0 失败 0 空文本** |
 | D4.5 全唐诗对照自动纠错 | ✅ **688 条自动纠错（54%）+ 239 条待人工复核 + 355 条无诗题信息** |
-| D5 去重 + manifest + 总结 | ⏳ 明日（10-29）在 1282 条文本上重跑 |
+| D5 去重 + manifest + 总结 | ✅ **已完成：1282 条全部保留（0 重复），manifest.jsonl 生成，最终 7.07 小时** |
 
 > **D3 关键修复（2026-10-27）**：
 > ① VAD 原固定阈值 0.02 对轻声朗读太高，98 个文件被误判全静音切出 0 段 → 改为自适应阈值（噪声底 = 能量 20% 分位 × 8，保底 0.004），0 段文件 98 → 4。
@@ -45,6 +45,31 @@
 1. **放数据**：把你的音频文件复制到 `data/raw/`
 2. **跑流水线**：`python scripts/run_all.py`
 3. **看结果**：`reports/` 下每个环节一份报告，`output/manifest.jsonl` 是最终产物
+
+## 队友首次使用（克隆后必看）
+
+**本仓库只含代码与报告，不含音频数据和模型文件**（见 `.gitignore`，总计约 1.1MB）。
+
+```bash
+# 1) 克隆
+git clone git@github.com:dongtingtech/feihualing-clean.git
+cd feihualing-clean
+
+# 2) 装依赖（建议先建虚拟环境）
+pip install faster-whisper soundfile numpy librosa noisereduce pyloudnorm zhconv pymupdf -i https://mirrors.aliyun.com/pypi/simple/
+
+# 3) 准备 ffmpeg：放一个 ffmpeg.exe 到 tools/ 目录（或装系统版并加入 PATH）
+#    注意 libsndfile 不支持 m4a/aac，D2 必须用 ffmpeg 解码
+
+# 4) 准备 Whisper 模型（不联网也能跑）：把 faster-whisper 的 base 模型放到 tools/faster-whisper-base/
+#    下载：HF_ENDPOINT=https://hf-mirror.com huggingface-cli download Systran/faster-whisper-base --local-dir tools/faster-whisper-base
+
+# 5) 自检 → 放数据 → 跑全流程
+python scripts/check_env.py
+python scripts/run_all.py
+```
+
+**目录说明**：`data/raw/`（原始音频）、`data/clean/`（归一后 16kHz wav）、`data/tangshi.jsonl`（全唐诗诗库，需先跑 `scripts/extract_tangshi.py`）、`output/segments/`（切分降噪后语段）、`output/manifest.jsonl`（最终训练用清单）。
 
 ## 先看这两篇
 
